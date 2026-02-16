@@ -16,6 +16,7 @@ pool
   .connect()
   .then(() => console.log("✅ Index.js => Connected to PostgreSQL"))
   .catch((err) => console.error("❌ DB connection error:", err));
+  
 scriptDB()
 
 app.use(body_parser.json())
