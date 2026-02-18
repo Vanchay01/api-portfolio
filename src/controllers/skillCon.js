@@ -24,4 +24,18 @@ const GetSkill = tryCatch(async (req, res) => {
   });
 });
 
-module.exports = { addSkill, GetSkill };
+const deleteSkill = tryCatch(async (req, res) => {
+  const id = req.params.id;
+  const result = await skillModel.deleteOne({ id: id });
+  if (result.length == 0) {
+    return res.status(400).json({
+      message: "Not Found....!",
+    });
+  }
+  return res.status(200).json({
+    message: "Delete Skill successfully",
+    data: result,
+  });
+});
+
+module.exports = { addSkill, GetSkill, deleteSkill };
