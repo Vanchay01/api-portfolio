@@ -1,6 +1,6 @@
 const express = require("express");
 const pool = require("./src/config/db");
-// const cors = require("cors")
+const cors = require("cors");
 const body_parser = require("body-parser")
 const scriptDB = require("./src/config/scriptDB");
 const skillRouter = require("./src/routes/skillRoutes");
@@ -10,7 +10,7 @@ require("dotenv").config();
 
 
 
-// app.use(cors())
+
 app.use(logger);
 pool
   .connect()
@@ -18,7 +18,7 @@ pool
   .catch((err) => console.error("❌ DB connection error:", err));
   
 scriptDB()
-
+app.use(cors()); // allow frontend requests
 app.use(body_parser.json())
 app.use('/api', skillRouter)
 app.use(errHandle)
