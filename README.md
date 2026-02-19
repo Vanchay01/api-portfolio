@@ -13,3 +13,6 @@ This project is suitable for:
   ### Base URL
   ```bash
   http://localhost:5000/api
+
+  1.lucky
+  
