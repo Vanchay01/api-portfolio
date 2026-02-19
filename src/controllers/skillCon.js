@@ -1,10 +1,19 @@
 const pool = require("../config/db");
 const tryCatch = require("express-async-handler");
 const skillModel = require("../model/skillModel");
+const { default: cloudinary } = require("../config/cloudinary");
 
 const addSkill = tryCatch(async (req, res) => {
-  const { name, image, rating } = req.body;
-  console.log(name);
+  const { name, rating } = req.body;
+  let image = null;
+  if (req.file) {
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "skills",
+    });
+    image = result.secure_url;
+  }
+
+
   const result = await pool.query(
     `INSERT INTO skill(name, image, rating) VALUES($1, $2, $3) RETURNING *`,
     [name, image, rating],
