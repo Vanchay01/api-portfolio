@@ -12,21 +12,25 @@ const addSkill = tryCatch(async (req, res) => {
     });
     image = result.secure_url;
   }
-
-
-  const result = await pool.query(
-    `INSERT INTO skill(name, image, rating) VALUES($1, $2, $3) RETURNING *`,
-    [name, image, rating],
-  );
-
+  const result = await skillModel.save({ name, image, rating });
+  if (result.length == 0) {
+    return res.status(400).json({
+      message: "Create Skill failed!",
+    });
+  }
   return res.status(201).json({
     message: "Created Skill successfully",
-    data: result.rows,
+    data: result,
   });
 });
 
 const GetSkill = tryCatch(async (req, res) => {
   const result = await skillModel.find();
+  if (result.length == 0) {
+    return res.status(400).json({
+      message: "Find Skill failed!",
+    });
+  }
   return res.status(200).json({
     message: "Find Skill successfully",
     data: result,
@@ -38,7 +42,7 @@ const deleteSkill = tryCatch(async (req, res) => {
   const result = await skillModel.deleteOne({ id: id });
   if (result.length == 0) {
     return res.status(400).json({
-      message: "Not Found....!",
+      message: "Delete Skill failed!",
     });
   }
   return res.status(200).json({
