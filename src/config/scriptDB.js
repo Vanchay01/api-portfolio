@@ -35,6 +35,20 @@ const scriptDB = async () => {
         created_at TIMESTAMP DEFAULT NOW()
       );
 
+      CREATE TABLE IF NOT EXISTS image_skill (
+        id SERIAL PRIMARY KEY,
+        originalname VARCHAR(255) NOT NULL,
+        path TEXT NOT NULL,
+        filename VARCHAR(255) NOT NULL,
+        size INT NOT NULL,
+        encoding VARCHAR(255) NOT NULL,
+        by_skill INT NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW(),
+        CONSTRAINT fk_image_skill
+          FOREIGN KEY (by_skill) REFERENCES skill(id)
+          ON DELETE CASCADE
+      );
+
       CREATE TABLE IF NOT EXISTS work (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255),
@@ -45,6 +59,20 @@ const scriptDB = async () => {
         framework VARCHAR(255),
         description TEXT,
         created_at TIMESTAMP DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS image_work (
+        id SERIAL PRIMARY KEY,
+        originalname VARCHAR(255) NOT NULL,
+        path TEXT NOT NULL,
+        filename VARCHAR(255) NOT NULL,
+        size INT NOT NULL,
+        encoding VARCHAR(255) NOT NULL,
+        by_work INT NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW(),
+        CONSTRAINT fk_image_work
+          FOREIGN KEY (by_work) REFERENCES work(id)
+          ON DELETE CASCADE
       );
 
       CREATE TABLE IF NOT EXISTS technology (
