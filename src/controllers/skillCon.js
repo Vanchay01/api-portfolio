@@ -1,27 +1,29 @@
 const pool = require("../config/db");
 const tryCatch = require("express-async-handler");
 const skillModel = require("../model/skillModel");
-const { default: cloudinary } = require("../config/cloudinary");
+const imageModel = require("../model/imageModel");
 
 const addSkill = tryCatch(async (req, res) => {
-  const { name, rating } = req.body;
-  let image = null;
-  if (req.file) {
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: "skills",
+  const client = await pool.connect();
+  try{
+    const { name, rating } = req.body;
+    await pool.query("BEGIN")
+    const skill = await skillModel.save(client, {name: name, rating: rating})
+    if(req.file){
+      await imageModel.uploadImageSkill(client, req.file, skill.id)
+    }
+    await pool.query("COMMIT");
+    
+    return res.status(201).json({
+      message: "Created Skill successfully",
+      data: skill,
     });
-    image = result.secure_url;
+  }catch(error){
+    await client.query("ROLLBACK")
+    throw error
+  }finally{
+    client.release()
   }
-  const result = await skillModel.save({ name, image, rating });
-  if (result.length == 0) {
-    return res.status(400).json({
-      message: "Create Skill failed!",
-    });
-  }
-  return res.status(201).json({
-    message: "Created Skill successfully",
-    data: result,
-  });
 });
 
 const GetSkill = tryCatch(async (req, res) => {

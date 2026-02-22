@@ -1,9 +1,7 @@
 const express = require("express")
-const multer = require("multer")
 const { addSkill, GetSkill, deleteSkill } = require("../controllers/skillCon")
 const upload = require("../middleware/upload")
 
-// const upload = multer({ dest: "uploads/" })
 
 const skillRouter = express.Router()
 skillRouter.post("/skill", upload, addSkill)
