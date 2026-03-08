@@ -6,7 +6,7 @@ const upload = require("../middleware/upload")
 // const upload = multer({ dest: "uploads/" })
 
 const skillRouter = express.Router()
-skillRouter.post("/skill", upload, addSkill)
+skillRouter.post("/skill", upload.single("image"), addSkill)
 skillRouter.get("/skill", GetSkill)
 skillRouter.delete("/skill/:id", deleteSkill)
 
