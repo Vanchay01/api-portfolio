@@ -30,7 +30,7 @@ const GetSkill = tryCatch(async (req, res) => {
   const result = await skillModel.find();
   if (result.length == 0) {
     return res.status(400).json({
-      message: "Find Skill failed!",
+      message: "Find Skill Not Found!",
     });
   }
   return res.status(200).json({

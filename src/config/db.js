@@ -8,7 +8,11 @@ const pool = new Pool({
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
 });
+<<<<<<< HEAD
 
+=======
+//
+>>>>>>> main
 // const pool = new Pool({
 //   connectionString: process.env.DATABASE_URL,
 //   ssl: {
