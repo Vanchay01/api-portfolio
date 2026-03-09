@@ -4,26 +4,13 @@ const skillModel = require("../model/skillModel");
 const imageModel = require("../model/imageModel");
 
 const addSkill = tryCatch(async (req, res) => {
-  const client = await pool.connect();
-  try{
     const { name, rating } = req.body;
-    await pool.query("BEGIN")
-    const skill = await skillModel.save(client, {name: name, rating: rating})
-    if(req.file){
-      await imageModel.uploadImageSkill(client, req.file, skill.id)
-    }
-    await pool.query("COMMIT");
-    
-    return res.status(201).json({
-      message: "Created Skill successfully",
-      data: skill,
-    });
-  }catch(error){
-    await client.query("ROLLBACK")
-    throw error
-  }finally{
-    client.release()
-  }
+    const image = req.file ? req.file.filename : null
+    const result = await skillModel.save({name: name, rating: rating, image: image})
+    return res.json({
+      message: "Skill created successfully",
+     data: result,
+    })
 });
 
 const GetSkill = tryCatch(async (req, res) => {
