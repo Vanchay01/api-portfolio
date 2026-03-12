@@ -9,8 +9,12 @@ const skillModel = {
         `, [name, rating, image])
         return query.rows
     },
+    async findOne({id}){
+        const query = await pool.query(`SELECT * FROM skill WHERE id = $1`, [id])
+        return query.rows
+    },
     async find(){
-        const query = await pool.query(`SELECT * FROM skill order by created_at DESC`)
+        const query = await pool.query(`SELECT * FROM skill ORDER BY created_at DESC`)
         return query.rows
     },
     async deleteOne({id}){
