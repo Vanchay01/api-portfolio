@@ -9,8 +9,8 @@ const skillModel = {
         `, [name, rating, image])
         return query.rows
     },
-    async findOne({id}){
-        const query = await pool.query(`SELECT * FROM skill WHERE id = $1`, [id])
+    async findOne({id, name}){
+        const query = await pool.query(`SELECT * FROM skill WHERE id = $1 || name = $2`, [id, name])
         return query.rows
     },
     async find(){
