@@ -50,14 +50,15 @@ const deleteSkill = tryCatch(async (req, res) => {
 });
 
 const updateSkill = tryCatch(async(req, res)=> {
-  const id = req.params.id
+  const id = req.params.id || req.body.id
   const image = req.file ? req.file.filename : null
   const {name, rating} = req.body
-  const res = await skillModel.updateOne({id: id, name: name, rating: rating, image: image})
-  return result.status(200).json({
+  console.log("Update:", id, image, name, rating)
+  const result = await skillModel.updateOne({id: id, name: name, rating: rating, image: image})
+  return res.status(200).json({
     message: "Updated  Skill successfully",
     data: result,
   });
 })
 
-module.exports = { addSkill, GetSkill, deleteSkill, getByID };
+module.exports = { addSkill, GetSkill, deleteSkill, getByID, updateSkill };

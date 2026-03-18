@@ -27,7 +27,7 @@ const skillModel = {
             SET 
                 name = $1, 
                 rating = $2, 
-                image = $3 
+                image = COALESCE($3, image)
             WHERE id =  $4 RETURNING *
         `, [name, rating, image, id])
         return query.rows
