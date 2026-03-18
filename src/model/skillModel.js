@@ -20,6 +20,17 @@ const skillModel = {
     async deleteOne({id}){
         const query = await pool.query(`DELETE FROM skill WHERE id = $1 RETURNING *`, [id])
         return query.rows
+    },
+    async updateOne({id, name, rating, image}) {
+        const query = await pool.query(`
+            UPDATE skill 
+            SET 
+                name = $1, 
+                rating = $2, 
+                image = $3 
+            WHERE id =  $4 RETURNING *
+        `, [name, rating, image, id])
+        return query.rows
     }
 }
 

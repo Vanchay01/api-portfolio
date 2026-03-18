@@ -15,11 +15,6 @@ const addSkill = tryCatch(async (req, res) => {
 
 const GetSkill = tryCatch(async (req, res) => {
   const result = await skillModel.find();
-  if (result.length == 0) {
-    return res.status(400).json({
-      message: "Find Skill Not Found!",
-    });
-  }
   return res.status(200).json({
     message: "Find Skill successfully",
     data: result,
@@ -53,5 +48,16 @@ const deleteSkill = tryCatch(async (req, res) => {
     data: result,
   });
 });
+
+const updateSkill = tryCatch(async(req, res)=> {
+  const id = req.params.id
+  const image = req.file ? req.file.filename : null
+  const {name, rating} = req.body
+  const res = await skillModel.updateOne({id: id, name: name, rating: rating, image: image})
+  return result.status(200).json({
+    message: "Updated  Skill successfully",
+    data: result,
+  });
+})
 
 module.exports = { addSkill, GetSkill, deleteSkill, getByID };
