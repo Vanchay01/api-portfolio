@@ -29,7 +29,7 @@ const scriptDB = async () => {
 
       CREATE TABLE IF NOT EXISTS skill (
         id SERIAL PRIMARY KEY,
-        name VARCHAR(255),
+        name VARCHAR(255) UNIQUE NOT NULL,
         image TEXT,
         rating DECIMAL(10,2),
         created_at TIMESTAMP DEFAULT NOW()

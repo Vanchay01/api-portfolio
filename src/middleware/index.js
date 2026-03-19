@@ -5,6 +5,7 @@ const logger = (req, res, next) => {
   next();
 };
 const errHandle = (err, req, res, next) => {
+    console.log(err.message)
     return res.status(500).json({
         Message: "SERVER IS DOWN",
         Error: err.message
@@ -12,15 +13,13 @@ const errHandle = (err, req, res, next) => {
 };
 
 const validate = (req, res, next) => {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    return res.status(400).json({
-      success: false,
-      errors: errors.array()
-    });
+  const result = validationResult(req)
+  if (result.isEmpty()) {
+    next();
+  } else {
+    console.log({ error: result.array() })
+    return res.status(401).json({ error: result.array() });
   }
-  next();
 };
 
 module.exports = {
