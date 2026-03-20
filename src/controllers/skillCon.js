@@ -8,12 +8,14 @@ const addSkill = tryCatch(async (req, res) => {
     const image = req.file ? req.file.filename : null
     
     const existsing = await skillModel.findName({name: name})
-    if(existsing){
+    console.log("sssssssss....")
+    if(existsing.length > 0){
       return res.json({
         message: "Skill name already exists",
         status: false
       })
     }
+    console.log("sssssssss")
     const result = await skillModel.save({name: name, rating: rating, image: image})
     return res.json({
       message: "Skill created successfully",

@@ -10,7 +10,7 @@ const skillModel = {
         return query.rows
     },
     async findName({name}){
-        const query = await pool.query("SELECT * FROM skill WHERE name = $1 LIMIT 1", [name])
+        const query = await pool.query("SELECT * FROM skill WHERE name = $1", [name])
         return query.rows
     },
     async findOne({id, name}){
