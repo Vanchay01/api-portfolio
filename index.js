@@ -7,6 +7,7 @@ const skillRouter = require("./src/routes/skillRoutes");
 const { errHandle, logger } = require("./src/middleware");
 const upload = require("./src/middleware/upload");
 const workRouter = require("./src/routes/workRoutes");
+const profileRouter = require("./src/routes/profileRoute");
 const app = express();
 require("dotenv").config();
 
@@ -23,6 +24,7 @@ scriptDB()
 app.use(cors()); // allow frontend requests
 app.use(body_parser.json())
 app.use("/uploads", express.static("uploads")); //This lets the browser access images like: http://localhost:5000/uploads/image-17100022222.png
+app.use('/api', profileRouter)
 app.use('/api', skillRouter)
 app.use('/api', workRouter)
 

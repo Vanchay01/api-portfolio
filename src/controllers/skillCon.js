@@ -14,7 +14,6 @@ const addSkill = tryCatch(async (req, res) => {
         status: false
       })
     }
-    console.log("sssssssss")
     const result = await skillModel.save({name: name, rating: rating, image: image})
     return res.json({
       message: "Skill created successfully",
@@ -24,11 +23,19 @@ const addSkill = tryCatch(async (req, res) => {
 });
 
 const GetSkill = tryCatch(async (req, res) => {
-  const result = await skillModel.find();
+  const page = parseInt(req.query.page) || 0
+  const limit = parseInt(req.query.limit) || 0
+  const result = await skillModel.find({page: page, limit: limit});
+  const total_pages = Math.ceil(result.total / limit)
   return res.status(200).json({
     message: "Find Skill successfully",
-    data: result,
-    total
+    pagination: {
+      current_pages: page,
+      total_pages,
+      limit: limit,
+      total_skill: result.total,
+    },
+    data: result.skill,
   });
 });
 
@@ -64,7 +71,13 @@ const updateSkill = tryCatch(async(req, res)=> {
   const id = req.params.id || req.body.id
   const image = req.file ? req.file.filename : null
   const {name, rating} = req.body
-  console.log("Update:", id, image, name, rating)
+  const existing = await skillModel.findName({name: name, id: id})
+  if(existing.length > 0){
+    return res.json({
+      message: "Skill name already exists. Please choose a different name.",
+      status: false
+    })
+  }
   const result = await skillModel.updateOne({id: id, name: name, rating: rating, image: image})
   return res.status(200).json({
     message: "Updated  Skill successfully",

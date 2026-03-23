@@ -9,17 +9,30 @@ const skillModel = {
         `, [name, rating, image])
         return query.rows
     },
-    async findName({name}){
-        const query = await pool.query("SELECT * FROM skill WHERE name = $1", [name])
+    async findName({name, id}){
+        const query = await pool.query("SELECT * FROM skill WHERE name = $1 and id != $2", [name, id])
         return query.rows
     },
     async findOne({id, name}){
-        const query = await pool.query(`SELECT * FROM skill WHERE id = $1 || name = $2`, [id, name])
+        const query = await pool.query(`SELECT * FROM skill WHERE id = $1 OR name = $2`, [id, name])
         return query.rows
-    },
-    async find(){
-        const query = await pool.query(`SELECT * FROM skill ORDER BY created_at DESC`)
-        return query.rows
+    }, 
+    async find({page, limit}){
+        const offset = (page - 1) * limit
+        if(limit === 0){
+            const query = await pool.query(`SELECT * FROM skill ORDER BY created_at DESC`)
+            return {
+                skill: query.rows,
+                total: query.rowCount
+            }
+        }
+        const query = await pool.query(`SELECT * FROM skill ORDER BY created_at DESC LIMIT $1 OFFSET $2`, [limit, offset])
+        const count = await pool.query("SELECT COUNT(*) FROM skill")
+        console.log(query)
+        return {
+            skill: query.rows,
+            total: Number(count.rows[0].count)
+        }
     },
     async deleteOne({id}){
         const query = await pool.query(`DELETE FROM skill WHERE id = $1 RETURNING *`, [id])
