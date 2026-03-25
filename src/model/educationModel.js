@@ -1,4 +1,5 @@
 const pool = require("../config/db")
+const { deleteOne } = require("./skillModel")
 
 const educationModel = {
     // Save
@@ -37,6 +38,26 @@ const educationModel = {
             SELECT * FORM education WHERE id = $1
         `, [id])
         return spl.rows
+    },
+    // Finf Name
+    async findName({name, id}){
+        const query = await pool.query("SELECT * FROM skill WHERE name = $1 and id != $2", [name, id])
+        return query.rows
+    },
+    // Delete One
+    async deleteOne(id){
+        const sql = await pool.query(`
+            DELETE FROM education WHERE id = $1
+        `, [id])
+        return sql.rows
+    },
+    // Update One
+    async updateOne(id, name, image, major, gpa, year){
+        const sql = await pool.query(`
+            UPDATE education SET name = $1, image = COALESCE($2, image), major = $3, gpa = $4, year = $5
+            WHERE id = $6 RETURNING *
+        `, [name, image, major, gpa, year, id])
+        return sql.rows
     }
 
 }

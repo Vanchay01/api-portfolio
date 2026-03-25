@@ -18,7 +18,7 @@ const addSkill = tryCatch(async (req, res) => {
     return res.json({
       message: "Skill created successfully",
       status: true,
-      data: result,
+      data: result, 
     })
 });
 

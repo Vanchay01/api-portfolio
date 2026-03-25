@@ -8,6 +8,7 @@ const { errHandle, logger } = require("./src/middleware");
 const upload = require("./src/middleware/upload");
 const workRouter = require("./src/routes/workRoutes");
 const profileRouter = require("./src/routes/profileRoute");
+const educationRouter = require("./src/routes/educationRoutes");
 const app = express();
 require("dotenv").config();
 
@@ -26,6 +27,7 @@ app.use(body_parser.json())
 app.use("/uploads", express.static("uploads")); //This lets the browser access images like: http://localhost:5000/uploads/image-17100022222.png
 app.use('/api', profileRouter)
 app.use('/api', skillRouter)
+app.use('/api', educationRouter)
 app.use('/api', workRouter)
 
 
