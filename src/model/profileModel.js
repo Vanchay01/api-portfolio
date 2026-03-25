@@ -27,7 +27,6 @@ const profileModel = {
                 image = $9
             WHERE id = $10 RETURNING *
         `, [name, username, phone, email, address, about, date, password, image, id]) 
-        console.log(sql.rows)
         return sql.rows
     }
     
