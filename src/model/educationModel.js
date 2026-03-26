@@ -32,10 +32,8 @@ const educationModel = {
         }
     },
     // Find One
-    async findOne(id, name){
-        console.log(id, name)
-        const spl = await pool.query(`SELECT * FROM skill WHERE id = $1 OR name = $2`, [id, name])
-        console.log(spl.rowCount)
+    async findOne({id, name}){
+        const spl = await pool.query(`SELECT * FROM education WHERE id = $1 OR name = $2`, [id, name])
         return spl.rows
     },
     // Finf Name

@@ -6,15 +6,14 @@ const addEducation = expressAsyncHandler(async (req, res) =>{
     const {name, major, gpa, year} = req.body
     const image = req.file ? req.file.filename : null
     
-    const existing = await educationModel.findOne(id, name)
-    if(existing) {
+    const existing = await educationModel.findOne({name: name})
+    if(existing.length > 0) {
         return res.json({
             message: "Education name existing already!!",
             status: false,
             data: existing
         })
     }
-
     const result = await educationModel.save(name, image, major, gpa, year)
     return res.json({
         message: "Created education successfully...",
