@@ -1,8 +1,11 @@
 const express = require("express")
-const { getAll } = require("../controllers/educationCon")
+const { getEducation, addEducation } = require("../controllers/educationCon")
+const { uploadImageSkill } = require("../model/imageModel")
+const upload = require("../middleware/upload")
 
 const educationRouter = express.Router()
 
-educationRouter.get("/education", getAll)
+educationRouter.post("/education", upload.single("image"), addEducation)
+educationRouter.get("/education", getEducation)
 
 module.exports = educationRouter

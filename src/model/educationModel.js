@@ -4,44 +4,43 @@ const { deleteOne } = require("./skillModel")
 const educationModel = {
     // Save
     async save(name, image, major, gpa, year){
+        console.log(name, image, major, gpa, year)
         const spl = await pool.query(`
             INSERT INTO education(name, image, major, gpa, year)
-            VALUE($1, $2, $3, $4, $5)    
+            VALUES($1, $2, $3, $4, $5) RETURNING *
         `, [name, image, major, gpa, year])
         return spl.rows
     },
     // Find All
-    async findAll(page, limit){
-        const offset = (page - 1) * limit
-        
-        const count = await pool.query(`SELECT COUNT(*) FORM education`)
+    async findAll(offset, limit){
         if( limit === 0 ){
             const sql = await pool.query("SELECT * FROM education ORDER BY created_at DESC")
-            return res.json({
+            
+            return {
                 education: sql.rows,
-                total: Number(count.rows[0].count)
-            })
+                total: sql.rowCount
+            }
         }
-
         const sql = await pool.query(`
             SELECT * FROM education ORDER BY created_at DESC
             LIMIT $1 OFFSET $2    
         `, [limit, offset])
-        return res.json({
+        const count = await pool.query(`SELECT COUNT(*) FORM education`)
+        return {
             education: sql.rows,
             total: Number(count.rows[0].count)
-        })
+        }
     },
     // Find One
     async findOne(id, name){
-        const spl = await pool.query(`
-            SELECT * FORM education WHERE id = $1
-        `, [id])
+        console.log(id, name)
+        const spl = await pool.query(`SELECT * FROM skill WHERE id = $1 OR name = $2`, [id, name])
+        console.log(spl.rowCount)
         return spl.rows
     },
     // Finf Name
     async findName({name, id}){
-        const query = await pool.query("SELECT * FROM skill WHERE name = $1 and id != $2", [name, id])
+        const query = await pool.query("SELECT * FROM education WHERE name = $1 and id != $2", [name, id])
         return query.rows
     },
     // Delete One
