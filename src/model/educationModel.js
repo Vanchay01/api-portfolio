@@ -4,7 +4,6 @@ const { deleteOne } = require("./skillModel")
 const educationModel = {
     // Save
     async save(name, image, major, gpa, year){
-        console.log(name, image, major, gpa, year)
         const spl = await pool.query(`
             INSERT INTO education(name, image, major, gpa, year)
             VALUES($1, $2, $3, $4, $5) RETURNING *
@@ -44,12 +43,12 @@ const educationModel = {
     // Delete One
     async deleteOne(id){
         const sql = await pool.query(`
-            DELETE FROM education WHERE id = $1
+            DELETE FROM education WHERE id = $1 RETURNING *
         `, [id])
         return sql.rows
     },
     // Update One
-    async updateOne(id, name, image, major, gpa, year){
+    async updateOne(name, image, major, gpa, year, id){
         const sql = await pool.query(`
             UPDATE education SET name = $1, image = COALESCE($2, image), major = $3, gpa = $4, year = $5
             WHERE id = $6 RETURNING *

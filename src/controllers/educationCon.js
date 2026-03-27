@@ -48,7 +48,55 @@ const getEducation = expressAsyncHandler(async (req, res) =>{
         },
         data: result.education
     })
-    
 })
 
-module.exports = { getEducation, addEducation }
+// Get Education by id
+const getEducationById = expressAsyncHandler(async(req, res) => {
+    const id = req.params.id
+    const result = await educationModel.findOne({id: id})
+    if(!result.length > 0){
+        return res.json({
+            message: `Record not found..`,
+            status: false
+        })
+    }
+    return res.json({
+        message: `Found record successfully.`,
+        status: true,
+        data: result
+    })
+})
+
+// Update education
+const updateEducation = expressAsyncHandler(async (req, res) => {
+    const id = req.params.id
+    const {name, major, gpa, year} = req.body
+    const image = req.file ? req.file.filename : null
+    const result = await educationModel.updateOne(name, image, major, gpa, year, id)
+
+    const existing = await educationModel.findName(name, id)
+    if(existing.length > 0){
+        return res.json({
+            message: "Education name exists already..",
+            status: false
+        })
+    }
+    return res.json({
+        message: "Updated education successfully.",
+        status: true,
+        data: result
+    })
+})
+
+// Delete Education 
+const deleteEudcation = expressAsyncHandler(async(req, res) => {
+    const id = req.params.id
+    const result = await educationModel.deleteOne(id)
+    return res.json({
+        message: `Delected education successfully.`,
+        status: true,
+        data: result
+    })
+})
+// 17158
+module.exports = { getEducation, addEducation, updateEducation, deleteEudcation, getEducationById }
