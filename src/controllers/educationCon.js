@@ -31,7 +31,7 @@ const getEducation = expressAsyncHandler(async (req, res) =>{
     const result = await educationModel.findAll(offset, limit)
     if(!result.education.length){
         return res.json({
-            message: "Record Not Found!",
+            message: "Record education not found!",
             status: false
         })
     }
@@ -50,9 +50,10 @@ const getEducation = expressAsyncHandler(async (req, res) =>{
     })
 })
 
-// Get Education by id
+// Get education by id
 const getEducationById = expressAsyncHandler(async(req, res) => {
     const id = req.params.id
+
     const result = await educationModel.findOne({id: id})
     if(!result.length > 0){
         return res.json({
@@ -72,15 +73,16 @@ const updateEducation = expressAsyncHandler(async (req, res) => {
     const id = req.params.id
     const {name, major, gpa, year} = req.body
     const image = req.file ? req.file.filename : null
-    const result = await educationModel.updateOne(name, image, major, gpa, year, id)
 
-    const existing = await educationModel.findName(name, id)
+    const existing = await educationModel.findName({name: name, id: id})
     if(existing.length > 0){
         return res.json({
-            message: "Education name exists already..",
+            message: "Education name already exists. Please choose a different name.",
             status: false
         })
     }
+
+    const result = await educationModel.updateOne(name, image, major, gpa, year, id)
     return res.json({
         message: "Updated education successfully.",
         status: true,
@@ -92,6 +94,12 @@ const updateEducation = expressAsyncHandler(async (req, res) => {
 const deleteEudcation = expressAsyncHandler(async(req, res) => {
     const id = req.params.id
     const result = await educationModel.deleteOne(id)
+     if (result.length == 0) {
+        return res.json({
+        message: "Delete education failed!",
+        status: false
+        });
+    }
     return res.json({
         message: `Delected education successfully.`,
         status: true,

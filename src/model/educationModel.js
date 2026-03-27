@@ -38,6 +38,7 @@ const educationModel = {
     // Finf Name
     async findName({name, id}){
         const query = await pool.query("SELECT * FROM education WHERE name = $1 and id != $2", [name, id])
+        console.log(query)
         return query.rows
     },
     // Delete One
