@@ -106,5 +106,5 @@ const deleteEudcation = expressAsyncHandler(async(req, res) => {
         data: result
     })
 })
-// 17158
+
 module.exports = { getEducation, addEducation, updateEducation, deleteEudcation, getEducationById }

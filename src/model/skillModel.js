@@ -37,11 +37,6 @@ const skillModel = {
             total: Number(count.rows[0].count)
         }
     },
-    // Delete One
-    async deleteOne({id}){
-        const query = await pool.query(`DELETE FROM skill WHERE id = $1 RETURNING *`, [id])
-        return query.rows
-    },
     // Update One
     async updateOne({id, name, rating, image}) {
         const query = await pool.query(`
@@ -53,7 +48,12 @@ const skillModel = {
             WHERE id =  $4 RETURNING *
         `, [name, rating, image, id])
         return query.rows
-    }
+    },
+    // Delete One
+    async deleteOne({id}){
+        const query = await pool.query(`DELETE FROM skill WHERE id = $1 RETURNING *`, [id])
+        return query.rows
+    },
 }
 
 module.exports = skillModel

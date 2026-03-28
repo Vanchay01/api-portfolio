@@ -38,15 +38,7 @@ const educationModel = {
     // Finf Name
     async findName({name, id}){
         const query = await pool.query("SELECT * FROM education WHERE name = $1 and id != $2", [name, id])
-        console.log(query)
         return query.rows
-    },
-    // Delete One
-    async deleteOne(id){
-        const sql = await pool.query(`
-            DELETE FROM education WHERE id = $1 RETURNING *
-        `, [id])
-        return sql.rows
     },
     // Update One
     async updateOne(name, image, major, gpa, year, id){
@@ -55,7 +47,14 @@ const educationModel = {
             WHERE id = $6 RETURNING *
         `, [name, image, major, gpa, year, id])
         return sql.rows
-    }
+    },
+    // Delete One
+    async deleteOne(id){
+        const sql = await pool.query(`
+            DELETE FROM education WHERE id = $1 RETURNING *
+        `, [id])
+        return sql.rows
+    },
 
 }
 

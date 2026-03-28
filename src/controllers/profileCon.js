@@ -1,7 +1,7 @@
 const expressAsyncHandler = require("express-async-handler")
 const profileModel = require("../model/profileModel");
 
-
+// add profile
 const addProfile = expressAsyncHandler(async(req, res) => {
     const {username, name, phone, email, address, about, date, password} = req.body;
     console.log(username)
@@ -22,11 +22,12 @@ const addProfile = expressAsyncHandler(async(req, res) => {
     })
 }) 
 
+// find profile
 const getProfile = expressAsyncHandler(async (req, res) => {
     const result = await profileModel.find()
     if(result.length == 0){
         return res.json({
-            message: "Profile not found",
+            message: "Profile record not found",
             status: false
         })
     }
@@ -37,11 +38,31 @@ const getProfile = expressAsyncHandler(async (req, res) => {
     })
 })
 
+// find profile by id
+const getProfileById = expressAsyncHandler(async(req, res) => {
+    const id = req.params.id
+    
+    const result = await profileModel.findOne({id: id})
+    if(!result.length > 0){
+        return res.json({
+            message: "Record profile not found..",
+            status: false
+        })
+    }
+    return res.json({
+        message: "find one profile record successfully..",
+        status: true,
+        data: result
+    })
+})
+
+// edit profile
 const editProfile = expressAsyncHandler(async (req, res) => {
     const id = req.params.id
-    const {name, username, phone, email, address, about, date, passsword, image} = req.body
-    console.log("eiditProfile:", phone)
-    const result = await profileModel.updateOne(name, username, phone, email, address, about, date, passsword, image, id)
+    const {name, username, phone, email, address, about, date} = req.body
+    const image = req.file ? req.file.filename : null
+
+    const result = await profileModel.updateOne(name, username, phone, email, address, about, date, image, id)
     if(result.length == 0){
         return res.json({
             message: "Nothing Change",
@@ -55,4 +76,4 @@ const editProfile = expressAsyncHandler(async (req, res) => {
     })
 })
 
-module.exports = { getProfile, editProfile, addProfile }
+module.exports = { getProfile, editProfile, addProfile, getProfileById }
