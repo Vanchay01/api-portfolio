@@ -4,14 +4,12 @@ const profileModel = require("../model/profileModel");
 // add profile
 const addProfile = expressAsyncHandler(async(req, res) => {
     const {username, name, phone, email, address, about, date, password} = req.body;
-    console.log(username)
     const image = req.file ? req.file.filename : null
 
     const result = await profileModel.save({username: username, name: name, phone: phone, email: email, address: address, about: about, date: date, password: password, image: image})
-
     if(result.length == 0){
         return res.json({
-            message: "Not found..",
+            message: "Add user is failed...!",
             status: false
         })
     }
