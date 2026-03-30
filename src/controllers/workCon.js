@@ -1,5 +1,6 @@
 const expressAsyncHandler = require("express-async-handler");
-const workModel = require("../model/workModel")
+const workModel = require("../model/workModel");
+const workService = require("../services/workService");
 
 const getWorkImage = expressAsyncHandler(async(req, res) => {
     const result = await workModel.findImage()
@@ -28,15 +29,17 @@ const getWork = expressAsyncHandler(async(req, res) => {
 })
 
 const addWork = expressAsyncHandler(async(req, res) => {
-    const {name} = req.body
+    const data = req.body
     const files = req.files
 
-    const result = await workModel.create({name: name, files: files})
-    // if(result){
-    //     return res.json({
-    //         message: "Work created Failed "
-    //     })
-    // }
+    const result = await workService.saveFull(data, files)
+
+    // const result = await workModel.create({name: name, files: files})
+    // // if(result){
+    // //     return res.json({
+    // //         message: "Work created Failed "
+    // //     })
+    // // }
     return res.json({
         message: "Work created successfully",
         result
