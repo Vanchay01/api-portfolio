@@ -29,11 +29,13 @@ const getWork = expressAsyncHandler(async(req, res) => {
 })
 
 const addWork = expressAsyncHandler(async(req, res) => {
-    const data = req.body
+    const { name, position, framework, github, demo, description } = req.body;
     const files = req.files
+    console.log("data:",name, position, framework, github, demo, description)
+    console.log("file:",files)
 
-    const result = await workService.saveFull(data, files)
-
+    const result = await workService.saveFull(name, position, framework, github, demo, description, files)
+    console.log("ok")
     // const result = await workModel.create({name: name, files: files})
     // // if(result){
     // //     return res.json({
@@ -42,7 +44,8 @@ const addWork = expressAsyncHandler(async(req, res) => {
     // // }
     return res.json({
         message: "Work created successfully",
-        result
+        status: true,
+        data: result
     })
 })
 module.exports = { getWork, addWork, getWorkImage }

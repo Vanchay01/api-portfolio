@@ -53,7 +53,6 @@ const scriptDB = async () => {
         id SERIAL PRIMARY KEY,
         name VARCHAR(255),
         position VARCHAR(150),
-        image TEXT,
         github TEXT,
         demo TEXT,
         framework VARCHAR(255),
