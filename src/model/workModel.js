@@ -2,14 +2,14 @@ const pool = require("../config/db");
 
 const workModel = { 
     // save
-    async save(client, data){
+    async save(client, name, position, github, demo, framework, description){
         const sql = await client.query(`
             INSERT INTO work(name, position, github, demo, framework, description)
-            VALUES $1, $2, $3, $4, $5, $6 RETURNING * 
-        `, [data.name, data.position, data.github, data.demo, data.framework, data.description])
-        return sql.rows
+            VALUES($1, $2, $3, $4, $5, $6) RETURNING * 
+        `, [name, position, github, demo, framework, description])
+        return sql.rows[0]
     },
-
+    
     // 
     async findImage(){
         const client = await pool.connect()
