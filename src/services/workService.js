@@ -9,7 +9,7 @@ const workService = {
             await client.query("BEGIN")
             // 1 insert work
             const work = await workModel.save(client, name, position, github, demo, framework, description)
-            const by_work = work.id
+            const by_work = work[0].id
             // 2 insert image
             for (const image of files || []) {
                 await client.query(`

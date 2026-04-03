@@ -7,27 +7,20 @@ const workModel = {
             INSERT INTO work(name, position, github, demo, framework, description)
             VALUES($1, $2, $3, $4, $5, $6) RETURNING * 
         `, [name, position, github, demo, framework, description])
-        return sql.rows[0]
+        return sql.rows
     },
-    
-    // 
-    async findImage(){
-        const client = await pool.connect()
-        try{
-            console.log("2")
-            await client.query("BEGIN")
-            const query = await client.query(`
-                SELECT * FROM image_work ORDER BY created_at DESC
-            `)
-            await client.query("COMMIT")
-            return query.rows
-        }catch(err) {   
-            await client.query("ROLLBACK")
-            throw err
-        }finally{
-            client.release()
-        }
+    // find one
+    async findOne({id, name}){
+        const sql = await pool.query(`
+            SELECT * FROM work WHERE id = $1 OR name = $2    
+        `, [id, name])
+
+        return sql.rows
     },
+    // async findOne({id, name}){
+    //     const query = await pool.query(`SELECT * FROM skill WHERE id = $1 OR name = $2`, [id, name])
+    //     return query.rows
+    // }, 
     async find(){
         const query = `
             SELECT 
@@ -57,38 +50,6 @@ const workModel = {
 
         return result.rows;
     },
-    async create({name, files}){
-        const client = await pool.connect()
-        try{
-            await client.query("BEGIN") 
-            const work = await client.query(`
-                INSERT INTO work(name) VALUES($1) RETURNING *
-            `, [name])
-
-            const by_work = work.rows[0].id
-            for(const file of files){
-                await client.query(`
-                    INSERT INTO image_work(originalname, path, filename, size, encoding, by_work)
-                    VALUES($1 ,$2 ,$3 ,$4 ,$5 ,$6)
-                `, [
-                    file.originalname,
-                    file.path,
-                    file.filename,
-                    file.size,
-                    file.encoding,
-                    by_work
-                ])
-            }
-            await client.query("COMMIT")
-            return work.rows
-        }catch(err){
-            await client.query("ROLLBACK")
-            throw err
-        }finally{
-            client.release()
-        }
-    }
-    
 }
 
 module.exports = workModel

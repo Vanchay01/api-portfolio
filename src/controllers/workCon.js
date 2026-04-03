@@ -31,6 +31,14 @@ const getWork = expressAsyncHandler(async(req, res) => {
 const addWork = expressAsyncHandler(async(req, res) => {
     const { name, position, framework, github, demo, description } = req.body;
     const files = req.files
+    console.log(name, position, framework, github, demo, description, files)
+    const existsing = await workModel.findOne({name: name})
+    if (existsing.length > 0) {
+        return res.json({
+            message: "Skill name already exists",
+            status: false,
+        });
+    }
     const result = await workService.saveFull(name, position, framework, github, demo, description, files)
     return res.json({
         message: "Work created successfully",
