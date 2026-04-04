@@ -14,13 +14,8 @@ const workModel = {
         const sql = await pool.query(`
             SELECT * FROM work WHERE id = $1 OR name = $2    
         `, [id, name])
-
         return sql.rows
     },
-    // async findOne({id, name}){
-    //     const query = await pool.query(`SELECT * FROM skill WHERE id = $1 OR name = $2`, [id, name])
-    //     return query.rows
-    // }, 
     async find(){
         const query = `
             SELECT 

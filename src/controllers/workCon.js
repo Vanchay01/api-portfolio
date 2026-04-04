@@ -31,11 +31,10 @@ const getWork = expressAsyncHandler(async(req, res) => {
 const addWork = expressAsyncHandler(async(req, res) => {
     const { name, position, framework, github, demo, description } = req.body;
     const files = req.files
-    console.log(name, position, framework, github, demo, description, files)
     const existsing = await workModel.findOne({name: name})
     if (existsing.length > 0) {
         return res.json({
-            message: "Skill name already exists",
+            message: "Work name already exists",
             status: false,
         });
     }

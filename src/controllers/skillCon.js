@@ -5,8 +5,12 @@ const addSkill = tryCatch(async (req, res) => {
   const { name, rating } = req.body;
   const image = req.file ? req.file.filename : null;
 
-  const existsing = await skillModel.findName({ name: name });
+  const existsing = await skillModel.findOne({ name: name });
   if (existsing.length > 0) {
+    // console.log({
+    //   message: "Skill name already exists",
+    //   status: false,
+    // });
     return res.json({
       message: "Skill name already exists",
       status: false,
