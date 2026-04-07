@@ -20,7 +20,6 @@ const scriptDB = async () => {
       CREATE TABLE IF NOT EXISTS education (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255),
-        image TEXT,
         major VARCHAR(255),
         gpa VARCHAR(255),
         year VARCHAR(255),

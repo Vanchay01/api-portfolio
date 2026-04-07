@@ -16,35 +16,32 @@ const workModel = {
         `, [id, name])
         return sql.rows
     },
-    async find(){
-        const query = `
-            SELECT 
-            w.id,
-            w.name,
-            w.created_at,
-            COALESCE(
-                json_agg(
-                json_build_object(
-                    'id', i.id,
-                    'originalname', i.originalname,
-                    'filename', i.filename,
-                    'path', i.path,
-                    'size', i.size
-                )
-                ) FILTER (WHERE i.id IS NOT NULL),
-                '[]'
-            ) AS images
-            FROM work w
-            LEFT JOIN image_work i
-            ON w.id = i.by_work
-            GROUP BY w.id
-            ORDER BY w.created_at DESC
-        `;
-
-        const result = await pool.query(query);
-
-        return result.rows;
+    async find(pages, limit){
+        const offset = (pages - 1) * limit;
+        if(limit === 0 || pages === 0){
+            console.log("1")
+            const sql = await pool.query(`
+                SELECT * FROM work ORDER BY created_at DESC    
+            `,)
+            return {
+                work: sql.rows,
+                total: sql.rowCount
+            }
+        }
+        console.log("2")
+        const sql = await pool.query(`
+            SELECT * FROM work ORDER BY created_at DESC OFFSET $1 LIMIT $2
+        `, [offset, limit])
+        const sql_count = await pool.query(`
+            SELECT COUNT(*) FROM work
+        `)
+        return {
+            work: sql.rows,
+            total: Number(sql_count.rows[0].count)
+        }
     },
+
+
 }
 
 module.exports = workModel

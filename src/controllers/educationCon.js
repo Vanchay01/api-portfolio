@@ -1,10 +1,10 @@
 const expressAsyncHandler = require("express-async-handler");
 const educationModel = require("../model/educationModel");
+const educationService = require("../services/education");
 // Add Education
 const addEducation = expressAsyncHandler(async (req, res) =>{
-    const id = req.params.id || null
     const {name, major, gpa, year} = req.body
-    const image = req.file ? req.file.filename : null
+    const files = req.file 
     
     const existing = await educationModel.findOne({name: name})
     if(existing.length > 0) {
@@ -14,7 +14,7 @@ const addEducation = expressAsyncHandler(async (req, res) =>{
             data: existing
         })
     }
-    const result = await educationModel.save(name, image, major, gpa, year)
+    const result = await educationService.save(name, major, gpa, year, files)
     return res.json({
         message: "Created education successfully...",
         status: true,
