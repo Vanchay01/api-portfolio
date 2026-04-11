@@ -12,6 +12,7 @@ const errHandle = (err, req, res, next) => {
     })
 };
 
+// validatior
 const validate = (req, res, next) => {
   const result = validationResult(req)
   if (result.isEmpty()) {

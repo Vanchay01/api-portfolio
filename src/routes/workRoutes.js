@@ -1,5 +1,5 @@
 const express = require("express")
-const { addWork, getWork, getWorkImage } = require("../controllers/workCon")
+const { addWork, getWorkById, getWork, } = require("../controllers/workCon")
 const upload = require("../middleware/upload")
 
 const workRouter = express.Router()
@@ -10,12 +10,12 @@ workRouter.post(
     addWork
 )
 workRouter.get(
-    "/work",
+    '/work',
     getWork
 )
 workRouter.get(
-    "/works",
-    getWorkImage
+    "/work/:id",
+    getWorkById
 )
 
 module.exports = workRouter

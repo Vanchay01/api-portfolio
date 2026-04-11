@@ -2,93 +2,76 @@ const pool = require("../config/db");
 
 const workModel = { 
     // save
-    async save(client, data){
+    async save({client, name, position, github, demo, framework, description}){
+        console.log(name, position, github, demo, framework, description)
         const sql = await client.query(`
             INSERT INTO work(name, position, github, demo, framework, description)
-            VALUES $1, $2, $3, $4, $5, $6 RETURNING * 
-        `, [data.name, data.position, data.github, data.demo, data.framework, data.description])
+            VALUES($1, $2, $3, $4, $5, $6) RETURNING * 
+        `, [name, position, github, demo, framework, description])
         return sql.rows
     },
 
-    // 
-    async findImage(){
-        const client = await pool.connect()
-        try{
-            console.log("2")
-            await client.query("BEGIN")
-            const query = await client.query(`
-                SELECT * FROM image_work ORDER BY created_at DESC
-            `)
-            await client.query("COMMIT")
-            return query.rows
-        }catch(err) {   
-            await client.query("ROLLBACK")
-            throw err
-        }finally{
-            client.release()
-        }
-    },
-    async find(){
-        const query = `
-            SELECT 
-            w.id,
-            w.name,
-            w.created_at,
-            COALESCE(
-                json_agg(
-                json_build_object(
-                    'id', i.id,
-                    'originalname', i.originalname,
-                    'filename', i.filename,
-                    'path', i.path,
-                    'size', i.size
-                )
-                ) FILTER (WHERE i.id IS NOT NULL),
-                '[]'
-            ) AS images
-            FROM work w
-            LEFT JOIN image_work i
-            ON w.id = i.by_work
-            GROUP BY w.id
-            ORDER BY w.created_at DESC
-        `;
-
-        const result = await pool.query(query);
-
-        return result.rows;
-    },
-    async create({name, files}){
-        const client = await pool.connect()
-        try{
-            await client.query("BEGIN") 
-            const work = await client.query(`
-                INSERT INTO work(name) VALUES($1) RETURNING *
-            `, [name])
-
-            const by_work = work.rows[0].id
-            for(const file of files){
-                await client.query(`
-                    INSERT INTO image_work(originalname, path, filename, size, encoding, by_work)
-                    VALUES($1 ,$2 ,$3 ,$4 ,$5 ,$6)
-                `, [
-                    file.originalname,
-                    file.path,
-                    file.filename,
-                    file.size,
-                    file.encoding,
-                    by_work
-                ])
+    // find
+    async find({page, limit}){
+        const offset = (page - 1) * limit
+        if(limit === 0){
+            const sql = await pool.query("SELECT * FROM work ORDER BY created_at DESC")
+            return {
+                work: sql.rows,
+                total: sql.rowCount
             }
-            await client.query("COMMIT")
-            return work.rows
-        }catch(err){
-            await client.query("ROLLBACK")
-            throw err
-        }finally{
-            client.release()
         }
+         
+        const sql = await pool.query(`
+            SELECT * FROM work ORDER BY created_at DESC LIMIT $1 OFFSET $2
+        `, [limit, offset])
+        const count = await pool.query("SELECT COUNT(*) FROM work")
+       
+        return {
+            work: sql.rows,
+            total: Number(count.rows[0].count)
+        }
+    },
+    // find one
+    async findOne(id){
+        const sql = await pool.query(`
+            SELECT
+                w.id            AS work_id,
+                w.name          AS work_name,
+                w.position      AS work_position,
+                w.github        AS work_github,
+                w.demo          AS work_demo,
+                w.framework     AS work_framework,
+                w.description   AS work_description,
+                w.created_at    AS work_created_at,
+
+                iw.id           AS image_id,
+                iw.originalname AS image_originalname,
+                iw.path         AS image_path,
+                iw.filename     AS image_filename,
+                iw.size         AS image_size,
+                iw.encoding     AS image_encoding,
+
+                t.id            AS tech_id,
+                t.name          AS tech_name,
+
+                tt.id           AS tool_id,
+                tt.name         AS tool_name,
+
+                kf.id           AS kf_id,
+                kf.name         AS kf_name,
+                kf.description  AS kf_description
+
+            FROM work w
+                LEFT JOIN image_work iw    ON iw.by_work       = w.id
+                LEFT JOIN technology t     ON t.by_work         = w.id
+                LEFT JOIN technology_tool tt ON tt.by_technology = t.id
+                LEFT JOIN key_feature kf   ON kf.by_work        = w.id
+            WHERE w.id = $1
+        `, [id])
+
+        return sql.rows
     }
     
 }
-
 module.exports = workModel

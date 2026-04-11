@@ -1,4 +1,5 @@
 const pool = require("../config/db")
+const scriptDB = require("../config/scriptDB")
 
 
 const skillModel = {
@@ -19,7 +20,7 @@ const skillModel = {
     async findOne({id, name}){
         const query = await pool.query(`SELECT * FROM skill WHERE id = $1 OR name = $2`, [id, name])
         return query.rows
-    }, 
+    },
     // Find All
     async find({page, limit}){
         const offset = (page - 1) * limit

@@ -1,48 +1,51 @@
-const expressAsyncHandler = require("express-async-handler");
+const asyncHandler = require("express-async-handler");
 const workModel = require("../model/workModel");
 const workService = require("../services/workService");
-
-const getWorkImage = expressAsyncHandler(async(req, res) => {
-    const result = await workModel.findImage()
-    if(result.length == 0){
+// add 
+const addWork = asyncHandler(async(req, res) => {
+    const {name, position, github, demo, framework, description} = req.body
+    // console.log(data)
+    const image = req.file ? req.file.filename : null;
+    console.log("sss", image)
+    const result = await workService.saveFull({image: image, name: name, position: position, github: github, demo: demo, framework: framework, description: description})
+    
+    return res.json({
+        message: "Work created successfully",
+        data: result
+    })
+})
+// find
+const getWork = asyncHandler(async(req, res)=> {
+    const page = parseInt(req.query.page) || 0
+    const limit = parseInt(req.query.limit) || 0
+    const result = await workModel.find({page: page, limit: limit})
+    if(!result.work.length){
         return res.json({
-            message: "Work not found..",
+            message: "work not fount",
+            status: false
         })
     }
     return res.json({
-        message: "Get All successfully",
-        result
+        message: "find work is successfully...",
+        status: true,
+        pagination: {
+            current_page: page,
+            // total_pages,
+            limit: limit,
+            work: result.total
+        },
+        data: result.work
     })
 })
 
-const getWork = expressAsyncHandler(async(req, res) => {
-    const result = await workModel.find()
-    if(result.length == 0){
-        return res.json({
-            message: "Work not found..",
-        })
-    }
-    return res.json({
-        message: "Get All successfully",
-        result
-    })
-})
 
-const addWork = expressAsyncHandler(async(req, res) => {
-    const data = req.body
-    const files = req.files
-
-    const result = await workService.saveFull(data, files)
-
-    // const result = await workModel.create({name: name, files: files})
-    // // if(result){
-    // //     return res.json({
-    // //         message: "Work created Failed "
-    // //     })
-    // // }
+// find one by id 
+const getWorkById = asyncHandler(async(req, res)=> {
+    const id = req.params.id
+    const result = await workModel.findOne(id)
     return res.json({
         message: "Work created successfully",
         result
     })
 })
-module.exports = { getWork, addWork, getWorkImage }
+module.exports = { addWork, getWork, getWorkById }
