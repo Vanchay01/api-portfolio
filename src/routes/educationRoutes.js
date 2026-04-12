@@ -5,7 +5,7 @@ const upload = require("../middleware/upload")
 
 const educationRouter = express.Router()
 
-educationRouter.post("/education", upload.single("image"), addEducation)
+educationRouter.post("/education", upload.array("image", 10), addEducation)
 educationRouter.get("/education", getEducation)
 educationRouter.get("/education/:id", getEducationById)
 educationRouter.delete("/education/:id", deleteEudcation)

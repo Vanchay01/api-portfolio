@@ -20,11 +20,24 @@ const scriptDB = async () => {
       CREATE TABLE IF NOT EXISTS education (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255),
-        image TEXT,
         major VARCHAR(255),
         gpa VARCHAR(255),
         year VARCHAR(255),
         created_at TIMESTAMP DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS image_education (
+        id SERIAL PRIMARY KEY,
+        originalname VARCHAR(255) NOT NULL,
+        path TEXT NOT NULL,
+        filename VARCHAR(255) NOT NULL,
+        size INT NOT NULL,
+        encoding VARCHAR(255) NOT NULL,
+        by_education INT NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW(),
+        CONSTRAINT fk_image_education
+          FOREIGN KEY (by_education) REFERENCES education(id)
+          ON DELETE CASCADE
       );
 
       CREATE TABLE IF NOT EXISTS skill (
@@ -35,25 +48,10 @@ const scriptDB = async () => {
         created_at TIMESTAMP DEFAULT NOW()
       );
 
-      CREATE TABLE IF NOT EXISTS image_skill (
-        id SERIAL PRIMARY KEY,
-        originalname VARCHAR(255) NOT NULL,
-        path TEXT NOT NULL,
-        filename VARCHAR(255) NOT NULL,
-        size INT NOT NULL,
-        encoding VARCHAR(255) NOT NULL,
-        by_skill INT NOT NULL,
-        created_at TIMESTAMP DEFAULT NOW(),
-        CONSTRAINT fk_image_skill
-          FOREIGN KEY (by_skill) REFERENCES skill(id)
-          ON DELETE CASCADE
-      );
-
       CREATE TABLE IF NOT EXISTS work (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255),
         position VARCHAR(150),
-        image TEXT,
         github TEXT,
         demo TEXT,
         framework VARCHAR(255),

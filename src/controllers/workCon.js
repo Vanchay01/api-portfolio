@@ -45,7 +45,8 @@ const getWorkById = asyncHandler(async(req, res)=> {
     const result = await workModel.findOne(id)
     return res.json({
         message: "Work created successfully",
-        result
+        status: true,
+        data: result
     })
 })
 module.exports = { addWork, getWork, getWorkById }
