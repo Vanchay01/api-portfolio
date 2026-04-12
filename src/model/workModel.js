@@ -37,13 +37,13 @@ const workModel = {
         const sql = await pool.query(`
             SELECT
                 w.id            AS work_id,
-                w.name          AS work_name,
-                w.position      AS work_position,
-                w.github        AS work_github,
-                w.demo          AS work_demo,
-                w.framework     AS work_framework,
-                w.description   AS work_description,
-                w.created_at    AS work_created_at,
+                w.name          AS name,
+                w.position      AS position,
+                w.github        AS github,
+                w.demo          AS demo,
+                w.framework     AS framework,
+                w.description   AS description,
+                w.created_at    AS created_at,
 
                 iw.id           AS image_id,
                 iw.originalname AS image_originalname,
@@ -70,7 +70,30 @@ const workModel = {
             WHERE w.id = $1
         `, [id])
 
-        return sql.rows
+        const rows = sql.rows;
+        console.log(rows)
+
+        if(rows.length === 0) return 0
+
+        const work = {
+            id: rows[0].work_id,
+            name: rows[0].name,
+            image: []
+        }
+
+        rows.forEach(row => {
+            if(row.image_id){
+                work.image.push({
+                    id: row.image_id,
+                    originalname: row.image_originalname,
+                    path: row.image_path,
+                    filename: row.image_filename,
+                    size: row.image_size,
+                    encoding: row.image_encoding,
+                })
+            }
+        })
+        return work
     }
     
 }

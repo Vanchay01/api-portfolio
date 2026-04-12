@@ -4,11 +4,9 @@ const workService = require("../services/workService");
 // add 
 const addWork = asyncHandler(async(req, res) => {
     const {name, position, github, demo, framework, description} = req.body
-    // console.log(data)
-    const image = req.file ? req.file.filename : null;
+    const image = req.files 
     console.log("sss", image)
-    const result = await workService.saveFull({image: image, name: name, position: position, github: github, demo: demo, framework: framework, description: description})
-    
+    const result = await workService.saveFull({ name: name, position: position, github: github, demo: demo, framework: framework, description: description, image: image,})
     return res.json({
         message: "Work created successfully",
         data: result
@@ -37,12 +35,16 @@ const getWork = asyncHandler(async(req, res)=> {
         data: result.work
     })
 })
-
-
 // find one by id 
 const getWorkById = asyncHandler(async(req, res)=> {
     const id = req.params.id
     const result = await workModel.findOne(id)
+    if(result.length === 0){
+        return res.json({
+            message: "Work not found..",
+            status: false
+        })
+    }
     return res.json({
         message: "Work created successfully",
         status: true,
