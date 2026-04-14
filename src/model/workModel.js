@@ -75,12 +75,20 @@ const workModel = {
 
         if(rows.length === 0) return 0
 
+        // object of work
         const work = {
             id: rows[0].work_id,
             name: rows[0].name,
-            image: []
+            position: rows[0].position,
+            github: rows[0].github,
+            demo: rows[0].demo,
+            framework: rows[0].framework,
+            description: rows[0].description,
+            created_at: rows[0].created_at,
+            image: [],
+            key_feature: []
         }
-
+        // get image
         rows.forEach(row => {
             if(row.image_id){
                 work.image.push({
@@ -90,6 +98,17 @@ const workModel = {
                     filename: row.image_filename,
                     size: row.image_size,
                     encoding: row.image_encoding,
+                })
+            }
+        })
+
+        // get key_feature
+        rows.forEach(row => {
+            if(row.kf_id){
+                work.key_feature.push({
+                    id: row.kf_id,
+                    name: row.kf_name,
+                    description: row.kf_description,
                 })
             }
         })
