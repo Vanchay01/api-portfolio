@@ -36,7 +36,7 @@ const workModel = {
     async findOne(id){
         const sql = await pool.query(`
             SELECT
-                w.id            AS work_id,
+                w.id            AS id,
                 w.name          AS name,
                 w.position      AS position,
                 w.github        AS github,
@@ -51,16 +51,20 @@ const workModel = {
                 iw.filename     AS image_filename,
                 iw.size         AS image_size,
                 iw.encoding     AS image_encoding,
+                iw.created_at   AS image_created_at,
 
                 t.id            AS tech_id,
                 t.name          AS tech_name,
+                t.created_at    AS tech_created_at,
 
                 tt.id           AS tool_id,
                 tt.name         AS tool_name,
+                tt.created_at   AS tool_created_at,
 
                 kf.id           AS kf_id,
                 kf.name         AS kf_name,
-                kf.description  AS kf_description
+                kf.description  AS kf_description,
+                kf.created_at   AS kf_created_at
 
             FROM work w
                 LEFT JOIN image_work iw    ON iw.by_work       = w.id
@@ -69,50 +73,51 @@ const workModel = {
                 LEFT JOIN key_feature kf   ON kf.by_work        = w.id
             WHERE w.id = $1
         `, [id])
+        return sql.rows
 
-        const rows = sql.rows;
-        console.log(rows)
+        // const rows = sql.rows;
+        // console.log(rows)
 
-        if(rows.length === 0) return 0
+        // if(rows.length === 0) return 0
 
-        // object of work
-        const work = {
-            id: rows[0].work_id,
-            name: rows[0].name,
-            position: rows[0].position,
-            github: rows[0].github,
-            demo: rows[0].demo,
-            framework: rows[0].framework,
-            description: rows[0].description,
-            created_at: rows[0].created_at,
-            image: [],
-            key_feature: []
-        }
-        // get image
-        rows.forEach(row => {
-            if(row.image_id){
-                work.image.push({
-                    id: row.image_id,
-                    originalname: row.image_originalname,
-                    path: row.image_path,
-                    filename: row.image_filename,
-                    size: row.image_size,
-                    encoding: row.image_encoding,
-                })
-            }
-        })
+        // // object of work
+        // const work = {
+        //     id: rows[0].work_id,
+        //     name: rows[0].name,
+        //     position: rows[0].position,
+        //     github: rows[0].github,
+        //     demo: rows[0].demo,
+        //     framework: rows[0].framework,
+        //     description: rows[0].description,
+        //     created_at: rows[0].created_at,
+        //     image: [],
+        //     key_feature: []
+        // }
+        // // get image
+        // rows.forEach(row => {
+        //     if(row.image_id){
+        //         work.image.push({
+        //             id: row.image_id,
+        //             originalname: row.image_originalname,
+        //             path: row.image_path,
+        //             filename: row.image_filename,
+        //             size: row.image_size,
+        //             encoding: row.image_encoding,
+        //         })
+        //     }
+        // })
 
-        // get key_feature
-        rows.forEach(row => {
-            if(row.kf_id){
-                work.key_feature.push({
-                    id: row.kf_id,
-                    name: row.kf_name,
-                    description: row.kf_description,
-                })
-            }
-        })
-        return work
+        // // get key_feature
+        // rows.forEach(row => {
+        //     if(row.kf_id){
+        //         work.key_feature.push({
+        //             id: row.kf_id,
+        //             name: row.kf_name,
+        //             description: row.kf_description,
+        //         })
+        //     }
+        // })
+        // return work
     }
     
 }

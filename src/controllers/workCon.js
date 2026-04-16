@@ -38,8 +38,9 @@ const getWork = asyncHandler(async(req, res)=> {
 // find one by id 
 const getWorkById = asyncHandler(async(req, res)=> {
     const id = req.params.id
-    const result = await workModel.findOne(id)
-    if(result.length === 0){
+    const result = await workService.serviceFind(id)
+    // const result = await workModel.findOne(id)
+    if(result === false){
         return res.json({
             message: "Work not found..",
             status: false
