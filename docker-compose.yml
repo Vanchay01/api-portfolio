@@ -17,7 +17,7 @@ services:
       context: .
       dockerfile: DockerFile-postgres
     container_name: db-portfolio
-    restart: always
+    # restart: always
     ports:
       - "5432:5432"
     environment:

@@ -11,7 +11,7 @@ const workModel = {
         return sql.rows
     },
 
-    // find
+    // find 
     async find({page, limit}){
         const offset = (page - 1) * limit
         if(limit === 0){
@@ -32,8 +32,15 @@ const workModel = {
             total: Number(count.rows[0].count)
         }
     },
+    // find name 
+    async findName({id, name}){
+        const sql = await pool.query(`
+            SELECT * FROM work WHERE name = $1 and id != $2
+        `, [name, id])
+        return sql.rows
+    },
     // find one
-    async findOne(id){
+    async findOne({id, name}){
         const sql = await pool.query(`
             SELECT
                 w.id            AS id,
@@ -71,53 +78,26 @@ const workModel = {
                 LEFT JOIN technology t     ON t.by_work         = w.id
                 LEFT JOIN technology_tool tt ON tt.by_technology = t.id
                 LEFT JOIN key_feature kf   ON kf.by_work        = w.id
-            WHERE w.id = $1
-        `, [id])
+            WHERE w.id = $1 OR w.name = $2
+        `, [id, name])
+
         return sql.rows
-
-        // const rows = sql.rows;
-        // console.log(rows)
-
-        // if(rows.length === 0) return 0
-
-        // // object of work
-        // const work = {
-        //     id: rows[0].work_id,
-        //     name: rows[0].name,
-        //     position: rows[0].position,
-        //     github: rows[0].github,
-        //     demo: rows[0].demo,
-        //     framework: rows[0].framework,
-        //     description: rows[0].description,
-        //     created_at: rows[0].created_at,
-        //     image: [],
-        //     key_feature: []
-        // }
-        // // get image
-        // rows.forEach(row => {
-        //     if(row.image_id){
-        //         work.image.push({
-        //             id: row.image_id,
-        //             originalname: row.image_originalname,
-        //             path: row.image_path,
-        //             filename: row.image_filename,
-        //             size: row.image_size,
-        //             encoding: row.image_encoding,
-        //         })
-        //     }
-        // })
-
-        // // get key_feature
-        // rows.forEach(row => {
-        //     if(row.kf_id){
-        //         work.key_feature.push({
-        //             id: row.kf_id,
-        //             name: row.kf_name,
-        //             description: row.kf_description,
-        //         })
-        //     }
-        // })
-        // return work
+    },
+    // update One
+    async updateOne({id, name, position, github, demo, framework, description}){
+        const sql = await pool.query(`
+            UPDATE work 
+            SET
+                name = $1,
+                position = $2,
+                github = $3,
+                demo = $4,
+                framework = $5,
+                description = $6
+            WHERE id = $7 RETURNING *
+        `, [name, position, github, demo, framework, description, id])
+        console.log("asda: ", sql)
+        return sql.rows
     }
     
 }

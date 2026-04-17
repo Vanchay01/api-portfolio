@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const workModel = require("../model/workModel");
 const workService = require("../services/workService");
+const { body } = require("express-validator");
 // add 
 const addWork = asyncHandler(async(req, res) => {
     const {name, position, github, demo, framework, description} = req.body
@@ -38,7 +39,7 @@ const getWork = asyncHandler(async(req, res)=> {
 // find one by id 
 const getWorkById = asyncHandler(async(req, res)=> {
     const id = req.params.id
-    const result = await workService.serviceFind(id)
+    const result = await workService.serviceFind({id: id})
     // const result = await workModel.findOne(id)
     if(result === false){
         return res.json({
@@ -52,4 +53,30 @@ const getWorkById = asyncHandler(async(req, res)=> {
         data: result
     })
 })
-module.exports = { addWork, getWork, getWorkById }
+// update one
+const updateWork = asyncHandler(async(req, res) => {
+    const id = req.params.id
+    const {name, position, github, demo, framework, description} = req.body
+    const image = req.files
+    const result = await workService.serviceUpdate({
+        id: id,
+        name: name,
+        position: position,
+        github: github,
+        demo: demo,
+        framework: framework,
+        description: description
+    })
+    if(result === null){
+        return res.json({
+            message: "Name of work already exists. Please choose a different name.",
+            status: false,
+        });
+    }
+    return res.json({
+        message: "Updated work successfully",
+        status: true,
+        data: result
+    })
+})
+module.exports = { addWork, getWork, getWorkById, updateWork }

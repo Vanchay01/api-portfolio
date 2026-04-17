@@ -53,6 +53,7 @@ const profileModel = {
                 image = $9
             WHERE id = $10 RETURNING *
         `, [name, username, phone, email, address, about, date, password, image, id]) 
+        
         return sql.rows
     },
     // deletc one

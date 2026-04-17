@@ -39,7 +39,7 @@ const workService = {
         if(work.length === 0){
             return false
         }
-        
+         
         // object work for find by id
         const obj_work = {
             id: work[0].id,
@@ -62,8 +62,8 @@ const workService = {
         
         work.forEach(row => {
             // push key feature to obj_work
-            if(row.kf_id && !seenKeyFeature.has(row.kf_id)){
-                seenKeyFeature.set(row.kf_id)
+            if(row.kf_id && !seenKeyFeature.has(row.kf_id)){ // it's mean it has row.kf_id and seenKeyFeature has no row.kf_id
+                seenKeyFeature.set(row.kf_id) // if seenKeyFeature has no row.kf_id, so we add row.kf_id into seenKeyFeature with .set()
                 obj_work.key_feature.push({
                     id: row.kf_id,
                     name: row.kf_name,
@@ -77,7 +77,7 @@ const workService = {
                 obj_work.technology.push({
                     id: row.tech_id,
                     name: row.tech_name,
-                    created_at: row.tech_created_at,
+                    created_at: row.tech_created_at,    
                     tools: []
                 });
             }
@@ -109,6 +109,21 @@ const workService = {
             }
         })
         return obj_work
+    },
+    // update
+    async serviceUpdate({id, name, position, github, demo, framework, description}){
+        const existing = await workModel.findName({id: id, name: name})
+        if(existing.length > 0) return null
+        const update = await workModel.updateOne({
+            id: id, 
+            name: name, 
+            position: position, 
+            github: github, 
+            demo: demo, 
+            framework: framework, 
+            description: description
+        })
+        return update
     }
 }
 

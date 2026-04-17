@@ -1,5 +1,5 @@
 const express = require("express")
-const { addWork, getWorkById, getWork, } = require("../controllers/workCon")
+const { addWork, getWorkById, getWork, updateWork, } = require("../controllers/workCon")
 const upload = require("../middleware/upload")
 
 const workRouter = express.Router()
@@ -19,6 +19,12 @@ workRouter.get(
 workRouter.get(
     "/work/:id",
     getWorkById
+)
+// update one
+workRouter.put(
+    "/work/:id",
+    upload.array("image", 10),
+    updateWork
 )
 
 module.exports = workRouter
