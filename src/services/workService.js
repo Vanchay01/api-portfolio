@@ -111,20 +111,134 @@ const workService = {
         return obj_work
     },
     // update
-    async serviceUpdate({id, name, position, github, demo, framework, description}){
-        const existing = await workModel.findName({id: id, name: name})
-        if(existing.length > 0) return null
-        const update = await workModel.updateOne({
-            id: id, 
-            name: name, 
-            position: position, 
-            github: github, 
-            demo: demo, 
-            framework: framework, 
-            description: description
-        })
-        return update
+    async serviceUpdate({id, name, position, github, demo, framework, description, deleteImage, image}){
+        const client = await pool.connect()
+        try{
+            await client.query(`BEGIN`)
+            // check existing name work
+            const existing = await workModel.findName({id: id, name: name})
+            if(existing.length > 0) return null
+            // update work
+            const update = await workModel.updateOne({
+                id: id, 
+                name: name, 
+                position: position, 
+                github: github, 
+                demo: demo, 
+                framework: framework, 
+                description: description
+            })
+            
+            // delete image
+            for (let imageId of deleteImage){
+                console.log("delete: ", imageId)
+                const result = await client.query(`
+                    SELECT * FROM image_work WHERE id = $1 AND by_work = $2
+                `, [imageId, id])
+                console.log("sdasda ==>", result.rows)
+
+                if (result.rows.length > 0) {
+                    const image = result.rows[0];
+                    console.log("ok", image)
+                    await fs.unlink(image.path);
+
+                    await client.query(
+                        "DELETE FROM image_work WHERE id = $1",
+                        [imageId]
+                    );
+                    
+                }
+            }
+            return update
+        }catch(err) {
+
+        }finally{
+
+        }
     }
 }
+// router.put("/work/:id", upload.array("images", 10), async (req, res) => {
+//   const client = await db.connect();
 
+//   try {
+//     const workId = req.params.id;
+
+//     const {
+//       name,
+//       position,
+//       github,
+//       demo,
+//       framework,
+//       description
+//     } = req.body;
+
+//     const deleteImages = req.body.deleteImages
+//       ? JSON.parse(req.body.deleteImages)
+//       : [];
+
+//     const newImages = req.files || [];
+
+//     await client.query("BEGIN");
+
+//     // 🔹 1. UPDATE work table
+//     await client.query(
+//       `UPDATE work SET
+//         name = $1,
+//         position = $2,
+//         github = $3,
+//         demo = $4,
+//         framework = $5,
+//         description = $6
+//       WHERE id = $7`,
+//       [name, position, github, demo, framework, description, workId]
+//     );
+
+//     // 🔹 2. DELETE images
+//     for (let imgId of deleteImages) {
+//       const result = await client.query(
+//         "SELECT * FROM image_work WHERE id = $1 AND by_work = $2",
+//         [imgId, workId]
+//       );
+
+//       if (result.rows.length > 0) {
+//         const image = result.rows[0];
+
+//         await fs.unlink(image.path);
+
+//         await client.query(
+//           "DELETE FROM image_work WHERE id = $1",
+//           [imgId]
+//         );
+//       }
+//     }
+
+//     // 🔹 3. ADD new images
+//     for (let file of newImages) {
+//       await client.query(
+//         `INSERT INTO image_work 
+//         (originalname, path, filename, size, encoding, by_work)
+//         VALUES ($1,$2,$3,$4,$5,$6)`,
+//         [
+//           file.originalname,
+//           file.path,
+//           file.filename,
+//           file.size,
+//           file.encoding,
+//           workId
+//         ]
+//       );
+//     }
+
+//     await client.query("COMMIT");
+
+//     res.json({ message: "Work updated fully ✅" });
+
+//   } catch (err) {
+//     await client.query("ROLLBACK");
+//     console.error(err);
+//     res.status(500).json({ error: "Update failed ❌" });
+//   } finally {
+//     client.release();
+//   }
+// });
 module.exports = workService

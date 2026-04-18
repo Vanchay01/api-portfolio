@@ -96,7 +96,6 @@ const workModel = {
                 description = $6
             WHERE id = $7 RETURNING *
         `, [name, position, github, demo, framework, description, id])
-        console.log("asda: ", sql)
         return sql.rows
     }
     

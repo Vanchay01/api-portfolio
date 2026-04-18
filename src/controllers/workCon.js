@@ -57,7 +57,9 @@ const getWorkById = asyncHandler(async(req, res)=> {
 const updateWork = asyncHandler(async(req, res) => {
     const id = req.params.id
     const {name, position, github, demo, framework, description} = req.body
+    const deleteImage = JSON.parse(req.body.deleteImage)
     const image = req.files
+
     const result = await workService.serviceUpdate({
         id: id,
         name: name,
@@ -65,7 +67,9 @@ const updateWork = asyncHandler(async(req, res) => {
         github: github,
         demo: demo,
         framework: framework,
-        description: description
+        description: description,
+        deleteImage: deleteImage,
+        image: image
     })
     if(result === null){
         return res.json({
