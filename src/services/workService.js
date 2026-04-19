@@ -1,5 +1,7 @@
 const pool = require("../config/db")
+const { addSkill } = require("../controllers/skillCon")
 const workModel = require("../model/workModel")
+const fs = require("fs/promises");
 
 const workService = {
     // save full of work
@@ -131,29 +133,31 @@ const workService = {
             
             // delete image
             for (let imageId of deleteImage){
-                console.log("delete: ", imageId)
                 const result = await client.query(`
                     SELECT * FROM image_work WHERE id = $1 AND by_work = $2
                 `, [imageId, id])
-                console.log("sdasda ==>", result.rows)
-
+                    
                 if (result.rows.length > 0) {
                     const image = result.rows[0];
-                    console.log("ok", image)
+                    console.log("ss.rows")
+                    console.log("ss.rowsdd", image.path)
                     await fs.unlink(image.path);
-
-                    await client.query(
-                        "DELETE FROM image_work WHERE id = $1",
+                    console.log("ss.rowsddssssssss", image.path)
+                    const ss = await client.query(
+                        "DELETE FROM image_work WHERE id = $1 RETURNING *",
                         [imageId]
                     );
                     
+                    console.log(ss.rows)
                 }
             }
+            await client.query("COMMIT");
             return update
         }catch(err) {
-
+            await client.query("ROLLBACK")
+            throw err
         }finally{
-
+            client.release() 
         }
     }
 }

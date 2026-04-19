@@ -59,7 +59,7 @@ const updateWork = asyncHandler(async(req, res) => {
     const {name, position, github, demo, framework, description} = req.body
     const deleteImage = JSON.parse(req.body.deleteImage)
     const image = req.files
-
+    console.log("OK: ", deleteImage)
     const result = await workService.serviceUpdate({
         id: id,
         name: name,
