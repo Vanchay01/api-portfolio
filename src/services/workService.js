@@ -8,6 +8,11 @@ const workService = {
     async saveFull({name, position, github, demo, framework, description, image}){
         const client = await pool.connect()
         try {
+            // existsing name
+            const existsing = await workModel.findOne({name: name})
+            if(existsing.length > 0){
+                return false
+            }
             await client.query("BEGIN")
             // 1 insert work
             const work = await workModel.save({client: client, name: name, position: position, github: github, demo: demo, framework: framework, description: description})
@@ -36,12 +41,11 @@ const workService = {
         }
     },
     // get by id
-    async serviceFind(id){
+    async serviceFindOne(id){
         const work = await workModel.findOne(id)
         if(work.length === 0){
             return false
         }
-         
         // object work for find by id
         const obj_work = {
             id: work[0].id,
@@ -147,8 +151,6 @@ const workService = {
                         "DELETE FROM image_work WHERE id = $1 RETURNING *",
                         [imageId]
                     );
-                    
-                    console.log(ss.rows)
                 }
             }
             await client.query("COMMIT");

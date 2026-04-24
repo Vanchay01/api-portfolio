@@ -15,18 +15,90 @@ const workModel = {
     async find({page, limit}){
         const offset = (page - 1) * limit
         if(limit === 0){
-            const sql = await pool.query("SELECT * FROM work ORDER BY created_at DESC")
+            const sql = await pool.query(`
+                SELECT
+                    w.id            AS id,
+                    w.name          AS name,
+                    w.position      AS position,
+                    w.github        AS github,
+                    w.demo          AS demo,
+                    w.framework     AS framework,
+                    w.description   AS description,
+                    w.created_at    AS created_at,
+
+                    iw.id           AS image_id,
+                    iw.originalname AS image_originalname,
+                    iw.path         AS image_path,
+                    iw.filename     AS image_filename,
+                    iw.size         AS image_size,
+                    iw.encoding     AS image_encoding,
+                    iw.created_at   AS image_created_at,
+
+                    t.id            AS tech_id,
+                    t.name          AS tech_name,
+                    t.created_at    AS tech_created_at,
+
+                    tt.id           AS tool_id,
+                    tt.name         AS tool_name,
+                    tt.created_at   AS tool_created_at,
+
+                    kf.id           AS kf_id,
+                    kf.name         AS kf_name,
+                    kf.description  AS kf_description,
+                    kf.created_at   AS kf_created_at
+
+                FROM work w
+                    LEFT JOIN image_work iw    ON iw.by_work       = w.id
+                    LEFT JOIN technology t     ON t.by_work         = w.id
+                    LEFT JOIN technology_tool tt ON tt.by_technology = t.id
+                    LEFT JOIN key_feature kf   ON kf.by_work        = w.id
+                ORDER BY created_at DESC
+            `)
             return {
                 work: sql.rows,
                 total: sql.rowCount
             }
         }
-         
         const sql = await pool.query(`
-            SELECT * FROM work ORDER BY created_at DESC LIMIT $1 OFFSET $2
+            SELECT
+                w.id            AS id,
+                w.name          AS name,
+                w.position      AS position,
+                w.github        AS github,
+                w.demo          AS demo,
+                w.framework     AS framework,
+                w.description   AS description,
+                w.created_at    AS created_at,
+
+                iw.id           AS image_id,
+                iw.originalname AS image_originalname,
+                iw.path         AS image_path,
+                iw.filename     AS image_filename,
+                iw.size         AS image_size,
+                iw.encoding     AS image_encoding,
+                iw.created_at   AS image_created_at,
+
+                t.id            AS tech_id,
+                t.name          AS tech_name,
+                t.created_at    AS tech_created_at,
+
+                tt.id           AS tool_id,
+                tt.name         AS tool_name,
+                tt.created_at   AS tool_created_at,
+
+                kf.id           AS kf_id,
+                kf.name         AS kf_name,
+                kf.description  AS kf_description,
+                kf.created_at   AS kf_created_at
+
+            FROM work w
+                LEFT JOIN image_work iw    ON iw.by_work       = w.id
+                LEFT JOIN technology t     ON t.by_work         = w.id
+                LEFT JOIN technology_tool tt ON tt.by_technology = t.id
+                LEFT JOIN key_feature kf   ON kf.by_work        = w.id
+            ORDER BY created_at DESC LIMIT $1 OFFSET $2
         `, [limit, offset])
         const count = await pool.query("SELECT COUNT(*) FROM work")
-       
         return {
             work: sql.rows,
             total: Number(count.rows[0].count)

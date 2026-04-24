@@ -6,10 +6,16 @@ const { body } = require("express-validator");
 const addWork = asyncHandler(async(req, res) => {
     const {name, position, github, demo, framework, description} = req.body
     const image = req.files 
-    console.log("sss", image)
     const result = await workService.saveFull({ name: name, position: position, github: github, demo: demo, framework: framework, description: description, image: image,})
+    if(result === false){
+        return res.json({
+            message: `Work ${name} is already exists`,
+            status: false
+        })
+    }
     return res.json({
         message: "Work created successfully",
+        status: true,
         data: result
     })
 })
@@ -39,7 +45,7 @@ const getWork = asyncHandler(async(req, res)=> {
 // find one by id 
 const getWorkById = asyncHandler(async(req, res)=> {
     const id = req.params.id
-    const result = await workService.serviceFind({id: id})
+    const result = await workService.serviceFindOne({id: id})
     // const result = await workModel.findOne(id)
     if(result === false){
         return res.json({
