@@ -40,7 +40,52 @@ const workService = {
            client.release() 
         }
     },
-    // get by id
+    // find =============================================================
+    async serviceFind({page, limit}){
+         console.log(page, limit)
+        const work = await workModel.find({page: page, limit: limit}) 
+        if(work.length === 0){
+            return false
+        }
+        const count = await pool.query("SELECT COUNT(*) FROM work")
+        console.log(count)
+        const objWork = {
+            id: work[0].id,
+            name: work[0].name,
+            position: work[0].position,
+            github: work[0].github,
+            demo: work[0].demo,
+            framework: work[0].framework,
+            description: work[0].description,
+            created_at: work[0].created_at,
+            key_feature: [],
+            technology: [],
+            image: [],
+        }
+        const seenImage = new Map()
+
+        work.forEach(row => {
+            // push image to obj_work
+            if(row.image_id && !seenImage.has(row.image_id)){
+                seenImage.set(row.image_id, true)
+                obj_work.image.push({
+                    id: row.image_id,
+                    originalname: row.image_originalname,
+                    path: row.image_path,
+                    filename: row.image_filename,
+                    size: row.image_size,
+                    encoding: row.image_encoding,
+                    created_at: row.image_created_at,
+                })
+            }
+        })
+        
+        return {
+            work: objWork,
+            total: Number(count.rows[0].count)
+        }
+    },
+    // get by id =============================================================
     async serviceFindOne(id){
         const work = await workModel.findOne(id)
         if(work.length === 0){
@@ -143,10 +188,10 @@ const workService = {
                     
                 if (result.rows.length > 0) {
                     const image = result.rows[0];
-                    console.log("ss.rows")
-                    console.log("ss.rowsdd", image.path)
+                    console.log("ss.rows - workService.js:191")
+                    console.log("ss.rowsdd - workService.js:192", image.path)
                     await fs.unlink(image.path);
-                    console.log("ss.rowsddssssssss", image.path)
+                    console.log("ss.rowsddssssssss - workService.js:194", image.path)
                     const ss = await client.query(
                         "DELETE FROM image_work WHERE id = $1 RETURNING *",
                         [imageId]

@@ -54,10 +54,7 @@ const workModel = {
                     LEFT JOIN key_feature kf   ON kf.by_work        = w.id
                 ORDER BY created_at DESC
             `)
-            return {
-                work: sql.rows,
-                total: sql.rowCount
-            }
+            return sql.rows
         }
         const sql = await pool.query(`
             SELECT
@@ -98,11 +95,8 @@ const workModel = {
                 LEFT JOIN key_feature kf   ON kf.by_work        = w.id
             ORDER BY created_at DESC LIMIT $1 OFFSET $2
         `, [limit, offset])
-        const count = await pool.query("SELECT COUNT(*) FROM work")
-        return {
-            work: sql.rows,
-            total: Number(count.rows[0].count)
-        }
+
+        return sql.rows
     },
     // find name 
     async findName({id, name}){

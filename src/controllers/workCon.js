@@ -23,8 +23,8 @@ const addWork = asyncHandler(async(req, res) => {
 const getWork = asyncHandler(async(req, res)=> {
     const page = parseInt(req.query.page) || 0
     const limit = parseInt(req.query.limit) || 0
-    const result = await workModel.find({page: page, limit: limit})
-    if(!result.work.length){
+    const result = await workService.serviceFind({page: page, limit: limit})
+    if(result === false){
         return res.json({
             message: "work not fount",
             status: false
@@ -65,7 +65,7 @@ const updateWork = asyncHandler(async(req, res) => {
     const {name, position, github, demo, framework, description} = req.body
     const deleteImage = JSON.parse(req.body.deleteImage)
     const image = req.files
-    console.log("OK: ", deleteImage)
+    console.log("OK: - workCon.js:68", deleteImage)
     const result = await workService.serviceUpdate({
         id: id,
         name: name,
