@@ -13,11 +13,8 @@ const imageWorkService = {
                     encoding: i.encoding,
                     by_work: by_work,
                 })
-                console.log("Hi: ", res)
-                result.push(res.rows)
-                
+                result.push(res)
             }
-            console.log("asdasd", result)
             return result
             
         } catch (err) {
