@@ -8,6 +8,7 @@ const { errHandle, logger } = require("./src/middleware");
 const workRouter = require("./src/routes/workRoutes");
 const profileRouter = require("./src/routes/profileRoute");
 const educationRouter = require("./src/routes/educationRoutes");
+const imageWorkRoure = require("./src/routes/imageWorkRoute");
 const app = express();
 require("dotenv").config();
 
@@ -26,6 +27,8 @@ app.use('/api', profileRouter)
 app.use('/api', skillRouter)
 app.use('/api', educationRouter)
 app.use('/api', workRouter)
+// route for image
+app.use('/api', imageWorkRoure)
 
 app.use(errHandle)
 
