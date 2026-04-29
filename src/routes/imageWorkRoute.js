@@ -3,12 +3,12 @@ const { addImageWork } = require("../controllers/imageWorkCon")
 const { array } = require("../middleware/upload")
 const upload = require("../middleware/upload")
 
-const imageWorkRoure = express.Router()
+const imageWorkRouter = express.Router()
 
-imageWorkRoure.post(
+imageWorkRouter.post(
     '/image_work', 
     upload.array("image", 10),
     addImageWork
 )
 
-module.exports = imageWorkRoure
+module.exports = imageWorkRouter
