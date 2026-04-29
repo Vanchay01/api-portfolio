@@ -7,6 +7,13 @@ const featureModel = {
             VALUES($1, $2, $3) RETURNING *
         `, [name, description, by_work])
         return sql.rows
+    },
+    async deleteOne({id}){
+        const sql = await pool.query(
+            `DELETE FROM key_feature WHERE id = $1 RETURNING *`, 
+            [id]
+        )
+        return sql.rows
     }
 }
 

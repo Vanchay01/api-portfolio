@@ -18,6 +18,33 @@ const addImageWork = asyncHandler(async(req, res)=>{
         status: true,
         data: result
     })
-})  
+})
 
-module.exports = {addImageWork}
+const getImageWork = asyncHandler(async(req, res) => {
+    const page = parseInt(req.query.page) || 0
+    const limti = parseInt(req.query.limit) || 0
+    const result = await imageWorkService.find({page: page, limit: limti})
+    if(!result || result === 0){
+        return res.json({
+            message: "Iamge work is not found...",
+            status: false
+        })
+    }
+    return res.json({
+        message: "find image work is successfully...",
+        status: true,
+        data: result
+    })
+})
+const deleteImageWork = asyncHandler(async(req, res)=>{
+    const id = req.params.id
+    console.log(id)
+    const result = await imageWorkService.deleteOneService({id: id})
+    return res.json({
+        message: "Deleted image work successfully...",
+        status: true,
+        data: result
+    })
+})
+
+module.exports = {addImageWork, deleteImageWork, getImageWork}

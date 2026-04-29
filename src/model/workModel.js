@@ -10,7 +10,6 @@ const workModel = {
         `, [name, position, github, demo, framework, description])
         return sql.rows
     },
-
     // find 
     async find({page, limit}){
         const offset = (page - 1) * limit
