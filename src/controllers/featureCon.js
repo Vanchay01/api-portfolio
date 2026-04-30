@@ -11,6 +11,29 @@ const AddFeature = asyncHandler(async(req, res) => {
         data: result
     })
 })
+const getFeature = asyncHandler(async(req, res) => {
+    const page = parseInt(req.query.page) || 0
+    const limit = parseInt(req.query.limit) || 0
+    const result = await featureService.find({page: page, limit:limit})
+    if(!result || result === 0){
+        return res.json({
+            message: 'feature is not found...',
+            status: false
+        })
+    }
+    const this_page_total = Math.ceil(result.total / limit) 
+    return res.json({
+        message: 'find feature is successfully...',
+        status: true,
+        pagination: {
+            current_page: page,
+            limit: limit,
+            this_page_total: this_page_total,
+            all_total:  result.total
+        },
+        data: result.feature
+    })
+})
 const deleteFeature = asyncHandler(async(req, res) => {
     const id = req.params.id
     const result = await featureService.deleteOne({id: id})
@@ -28,4 +51,4 @@ const deleteFeature = asyncHandler(async(req, res) => {
 })
 
 
-module.exports = {AddFeature, deleteFeature}
+module.exports = {AddFeature, deleteFeature, getFeature}

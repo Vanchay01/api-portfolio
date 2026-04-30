@@ -1,13 +1,17 @@
 
 
 const express = require("express")
-const { addTool, deleteTool } = require("../controllers/toolCon")
+const { addTool, deleteTool, getTool } = require("../controllers/toolCon")
 
 const toolRouter = express.Router()
 
 toolRouter.post(
     '/',
     addTool
+)
+toolRouter.get(
+    '/',
+    getTool
 )
 toolRouter.delete(
     '/:id',

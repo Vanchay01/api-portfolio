@@ -17,6 +17,29 @@ const addTool = asyncHandler(async(req, res) => {
         data: result
     })
 })
+const getTool = asyncHandler(async(req, res) => {
+    const page = parseInt(req.query.page) || 0
+    const limit = parseInt(req.query.limit) || 0
+    const result = await toolService.find({page: page, limit:limit})
+    if(!result || result === 0){
+        return res.json({
+            message: 'tool is not found...',
+            status: false
+        })
+    }
+    const this_page_total = Math.ceil(result.total / limit) 
+    return res.json({
+        message: 'find tool is successfully...',
+        status: true,
+        pagination: {
+            current_page: page,
+            limit: limit,
+            this_page_total: this_page_total,
+            all_total:  result.total
+        },
+        data: result.tool
+    })
+})
 const deleteTool = asyncHandler(async(req, res) => {
     const id = req.params.id
     const result = await toolService.deleteOne({id: id})
@@ -33,4 +56,4 @@ const deleteTool = asyncHandler(async(req, res) => {
     })
 })
 
-module.exports = {addTool, deleteTool}
+module.exports = {addTool, deleteTool, getTool}
