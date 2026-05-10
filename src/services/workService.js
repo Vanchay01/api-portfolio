@@ -19,7 +19,7 @@ const workService = {
         }
         const SeenFeature = new Set()
         const SeenImage = new Set()
-        const SeenTech = new Set()
+        const SeenTechnology = new Map()
         result.forEach((data) => {
             if(data.feature_id && !SeenFeature.has(data.feature_id)){
                 SeenFeature.add(data.feature_id)
@@ -31,7 +31,7 @@ const workService = {
                 })
             }
             if(data.image_id && !SeenImage.has(data.image_id)){
-                SeenImage.add(data.feature_id)
+                SeenImage.add(data.image_id)
                 work.image.push({
                     id: data.image_id,
                     originalname: data.image_originalname,
@@ -42,13 +42,25 @@ const workService = {
                     created_at: data.image_created_at
                 })
             }
-            if(data.technology_id && !SeenTech.has(data.technology_id)){
-                SeenTech.add(data.technology_id, {tools: new Set()})
+            if(data.technology_id && !SeenTechnology.has(data.technology_id)){
+                SeenTechnology.set(data.technology_id, {tools: new Map()})
                 work.technology.push({
-                    id: 1,
-                    name: "sss",
+                    id: data.technology_id,
+                    name: data.technology_name,
                     tools: []
                 })
+            }
+            if(data.tool_id && SeenTechnology.has(data.technology_id)){
+                const techEntry = SeenTechnology.get(data.technology_id)
+                if(!techEntry.tools.has(data.tool_id)){
+                    techEntry.tools.set(data.tool_id, true)
+                    const tech = work.technology.find(find => find.id === data.technology_id)
+                    tech.tools.push({
+                        id: data.tool_id,
+                        name: data.tool_name,
+                        created_at: data.tool_created_at
+                    })
+                }
             }
         })
         return work
