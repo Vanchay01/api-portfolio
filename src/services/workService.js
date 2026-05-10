@@ -1,9 +1,49 @@
-const pool = require("../config/db")
-const { addSkill } = require("../controllers/skillCon")
 const workModel = require("../model/workModel")
-const fs = require("fs/promises");
+
 
 const workService = {
+    async findOne({id}){
+        const result = await workModel.findOne({id: id})
+        const work = {
+            id: result[0].id,
+            name: result[0].name,
+            position: result[0].position,
+            github: result[0].github,
+            demo: result[0].demo,
+            framework: result[0].framework,
+            description: result[0].description,
+            created_at: result[0].created_at,
+            image: [],
+            key_feature: [],
+            technology: []
+        }
+        const SeenFeature = new Set()
+        const SeenImage = new Set()
+        result.forEach((data) => {
+            if(data.feature_id && !SeenFeature.has(data.feature_id)){
+                SeenFeature.add(data.feature_id)
+                work.key_feature.push({
+                    id: data.feature_id,
+                    name: data.feature_name,
+                    description: data.feature_description,
+                    created_at: data.feature_created_at
+                })
+            }
+            if(data.image_id && !SeenImage.has(data.image_id)){
+                SeenImage.add(data.feature_id)
+                work.image.push({
+                    id: data.image_id,
+                    originalname: data.image_originalname,
+                    filename: data.image_filename,
+                    path: data.image_path,
+                    size: data.image_size,
+                    encoding: data.image_encoding,
+                    created_at: data.image_created_at
+                })
+            }
+        })
+        return work
+    },
     // save full of work
     async saveFull({name, position, github, demo, framework, description, image}){
         const client = await pool.connect()
@@ -113,7 +153,7 @@ const workService = {
         
         work.forEach(row => {
             // push key feature to obj_work
-            if(row.kf_id && !seenKeyFeature.has(row.kf_id)){ // it's mean it has row.kf_id and seenKeyFeature has no row.kf_id
+            if(row.kf_id && !seenKeyFeature.has(row.kf_id)){ // it's mean it has row.kf_id and seenKeyFeature no has row.kf_id
                 seenKeyFeature.set(row.kf_id) // if seenKeyFeature has no row.kf_id, so we add row.kf_id into seenKeyFeature with .set()
                 obj_work.key_feature.push({
                     id: row.kf_id,

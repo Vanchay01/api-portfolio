@@ -45,7 +45,8 @@ const getWork = asyncHandler(async(req, res)=> {
 // find one by id 
 const getWorkById = asyncHandler(async(req, res)=> {
     const id = req.params.id
-    const result = await workService.serviceFindOne({id: id})
+    // const { name } = req.body 
+    const result = await workService.findOne({id: id})
     // const result = await workModel.findOne(id)
     if(result === false){
         return res.json({
@@ -65,7 +66,7 @@ const updateWork = asyncHandler(async(req, res) => {
     const {name, position, github, demo, framework, description} = req.body
     const deleteImage = JSON.parse(req.body.deleteImage)
     const image = req.files
-    console.log("OK: - workCon.js:68", deleteImage)
+    console.log("OK: - workCon.js:69", deleteImage)
     const result = await workService.serviceUpdate({
         id: id,
         name: name,

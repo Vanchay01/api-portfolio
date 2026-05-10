@@ -36,8 +36,7 @@ const toolModel = {
             `SELECT COUNT(*) FROM technology_tool`
         )
         return sql.rows
-    },
-    asyn
+    }
 }
 
 module.exports = toolModel

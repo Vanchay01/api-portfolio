@@ -53,7 +53,6 @@ const GetSkill = tryCatch(async (req, res) => {
 // Get skill by id
 const getByID = tryCatch(async (req, res) => {
   const id = req.params.id;
-
   const result = await skillModel.findOne({ id: id });
   if (result.length == 0) {
     return res.json({
