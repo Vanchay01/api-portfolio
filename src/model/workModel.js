@@ -98,7 +98,7 @@ const workModel = {
                 feature.description  AS feature_description,
                 feature.created_at   AS feature_created_at,
 
-                tech.id            AS technology_id,
+                tech.id            AS c,
                 tech.name          AS technology_name,
                 tech.created_at    AS technology_created_at,
 

@@ -19,6 +19,7 @@ const workService = {
         }
         const SeenFeature = new Set()
         const SeenImage = new Set()
+        const SeenTech = new Set()
         result.forEach((data) => {
             if(data.feature_id && !SeenFeature.has(data.feature_id)){
                 SeenFeature.add(data.feature_id)
@@ -39,6 +40,14 @@ const workService = {
                     size: data.image_size,
                     encoding: data.image_encoding,
                     created_at: data.image_created_at
+                })
+            }
+            if(data.technology_id && !SeenTech.has(data.technology_id)){
+                SeenTech.add(data.technology_id, {tools: new Set()})
+                work.technology.push({
+                    id: 1,
+                    name: "sss",
+                    tools: []
                 })
             }
         })
