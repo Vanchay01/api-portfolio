@@ -11,6 +11,7 @@ const workModel = {
     },
     // find 
     async find(){
+        console.log('asdasd - workModel.js:14')
         const sql = await pool.query(
             `SELECT 
                 w.id            AS id,
@@ -30,13 +31,18 @@ const workModel = {
                 img.encoding     AS image_encoding,
                 img.created_at   AS image_created_at,
 
-                feature.id       AS feature_name,
-                feature.name     AS
+                feature.id          AS feature_id,
+                feature.name        AS feature_name,
+                feature.created_at  AS feature_created_at
+
             FROM work w
-                LEFT JOIN image_work img ON img.id = w.id
-                LEFT JOIN key_feature feature ON feature.id = w.id
+                LEFT JOIN image_work img 
+                    ON img.id = w.id
+                LEFT JOIN key_feature feature 
+                    ON feature.id = w.id
             ORDER BY w.created_at DESC`
         )
+        console.log(sql.rows)
         return sql.rows
     },
     async findLimit({limit, offset}){
@@ -57,15 +63,17 @@ const workModel = {
             img.filename     AS iamge_filename,
             img.size         AS image_size,
             img.encoding     AS image_encoding,
-            img.created_at   AS image_created_at
+            img.created_at   AS image_created_at,
             
-            feature.id      AS feature_id,
-            feature.name      AS feature_name,
-            feature.created_at      AS feature_created_at,
+            feature.id          AS feature_id,
+            feature.name        AS feature_name,
+            feature.created_at  AS feature_created_at
 
         FROM work w
-            LEFT JOIN image_work img ON img.id = w.id
-            LEFT JOIN key_feature feature ON feature.id = w.id
+            LEFT JOIN image_work img 
+                ON img.id = w.id
+            LEFT JOIN key_feature feature 
+                ON feature.id = w.id
         ORDER BY w.created_at DESC
         LIMIT $1 OFFSET $2`,
         [limit, offset]
