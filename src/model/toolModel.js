@@ -16,6 +16,7 @@ const toolModel = {
         return sql.rows
     },
     async findLimit({limit, offset}){
+        console.log(limit, offset)
         const sql = await pool.query(
             `SELECT * FROM technology_tool 
             ORDER BY created_at DESC 
